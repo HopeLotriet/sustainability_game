@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
-import logo from '../assets/Logo.png';
+import logo from '../assets/logo2.jpg';
 
 const Login = () => {
     const [email, setEmail] = useState('');

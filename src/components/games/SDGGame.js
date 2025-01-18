@@ -1,75 +1,153 @@
-// src/pages/SDGGame.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaSignOutAlt, FaArrowLeft } from 'react-icons/fa'; // Import icons
 import '../index.css';
+import { FaUser, FaSignOutAlt, FaArrowLeft } from 'react-icons/fa'; // Import icons
 
-function SDGGame() {
-  const [number, setNumber] = useState(Math.floor(Math.random() * 10) + 1);
-  const [message, setMessage] = useState("");
+const SDGGame = ({ sdgId, categories }) => {
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [currentLetter, setCurrentLetter] = useState(null);
+    const [isSpinning, setIsSpinning] = useState(false);
+    const [userWord, setUserWord] = useState('');
+    const [feedback, setFeedback] = useState('');
 
-  const handleGuess = (guess) => {
-    if ((number % 2 === 0 && guess === 'even') || (number % 2 !== 0 && guess === 'odd')) {
-      setMessage("Correct! Well done!");
-    } else {
-      setMessage("Oops! Try again.");
-    }
-    setNumber(Math.floor(Math.random() * 10) + 1);
-  };
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const handleLogout = () => {
+      localStorage.removeItem('authToken');
+      navigate('/');
+    };
 
-const handleLogout = () => {
-  localStorage.removeItem('authToken');
-  navigate('/');
-};
+    const goToProfile = () => {
+      navigate('/profile');
+    };
 
-const goToProfile = () => {
-  navigate('/profile');
-};
+    const goBack = () => {
+      navigate(-1);
+    };
 
-const goToQuizPage = (sdgId) => {
-  navigate(`/games/Quiz/${sdgId}`);
-};
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
-const goBack = () => {
-  navigate(-1);
-};
+    const spinWheel = () => {
+        setIsSpinning(true);
+        setFeedback(''); // Clear previous feedback
+        setTimeout(() => {
+            const randomIndex = Math.floor(Math.random() * letters.length);
+            setCurrentLetter(letters[randomIndex]);
+            setIsSpinning(false);
+        }, 3000); // Spin duration
+    };
 
-  return (
-    <div className="game-container">
-      <div className="top-nav">
-        <button onClick={goBack} className="back-button">
-          <FaArrowLeft /> Back
-        </button>
-        <div className="nav-buttons-right">
-          <button onClick={goToProfile} className="nav-button">
-            <FaUser /> Profile
+    const handleWordSubmission = () => {
+        if (userWord.trim() === '') {
+            setFeedback('Please type a word!');
+        } else {
+            setFeedback(`Great! "${userWord}" relates to "${selectedCategory}"`);
+        }
+        setUserWord('');
+    };
+
+
+    return (
+        <div className="category-wheel-container">
+        <div className="top-nav">
+          <button onClick={goBack} className="back-button">
+            <FaArrowLeft /> Back
           </button>
-          <button onClick={handleLogout} className="logout-button">
-            <FaSignOutAlt /> Logout
-          </button>
+          <div className="nav-buttons-right">
+            <button onClick={goToProfile} className="nav-button">
+              <FaUser /> Profile
+            </button>
+            <button onClick={handleLogout} className="logout-button">
+              <FaSignOutAlt /> Logout
+            </button>
+          </div>
+        </div>
+            <h1>SDG {sdgId} Game</h1>
+
+            {/* Category Selection */}
+            {!selectedCategory ? (
+                <div>
+                    <h2>Choose a Category</h2>
+                    <div className="categories-container">
+                        {categories.map((category, index) => (
+                            <button
+                                key={index}
+                                className="category-button"
+                                onClick={() => setSelectedCategory(category)}
+                            >
+                                {category}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            ) : (
+                // Alphabet Wheel Game
+                <div>
+                    <h2>Category: {selectedCategory}</h2>
+
+                    {/* Alphabet Wheel */}
+                    <div className={`wheel ${isSpinning ? 'spinning' : ''}`}>
+                        {letters.map((letter, index) => (
+                            <div
+                                key={index}
+                                className={`wheel-letter ${
+                                    currentLetter === letter ? 'highlighted' : ''
+                                }`}
+                            >
+                                {letter}
+                            </div>
+                        ))}
+                    </div>
+
+                    <button
+                        onClick={spinWheel}
+                        className="spin-button"
+                        disabled={isSpinning}
+                    >
+                        Spin the Wheel
+                    </button>
+
+                    {currentLetter && !isSpinning && (
+                        <div className="letter-display">
+                            <h3>Letter: {currentLetter}</h3>
+                            <p>Type a word related to {selectedCategory} starting with "{currentLetter}"!</p>
+                            <input
+                                type="text"
+                                value={userWord}
+                                onChange={(e) => setUserWord(e.target.value)}
+                                placeholder="Type your word here"
+                                className="word-input"
+                            />
+                            <button onClick={handleWordSubmission} className="submit-button">
+                                Submit
+                            </button>
+                        </div>
+                    )}
+
+                    {feedback && <p className="feedback">{feedback}</p>}
+
+                    {/* Reset Category Button */}
+                    <button
+                        className="reset-button"
+                        onClick={() => {
+                            setSelectedCategory(null);
+                            setCurrentLetter(null);
+                            setUserWord('');
+                            setFeedback('');
+                        }}
+                    >
+                        Choose Another Category
+                    </button>
+                </div>
+            )}
+
+        <div className="footer">
+          <p>Sustainability Awareness Gaming App</p>
+          <p>University of Johannesburg</p>
+          <p>2024</p>
         </div>
       </div>
-      <div className='horizontal-line'></div>
-      <h2>SDG Game</h2>
-      <p>Is the number {number} odd or even?</p>
-      <div className="guess-buttons">
-        <button onClick={() => handleGuess('odd')}>Odd</button>
-        <button onClick={() => handleGuess('even')}>Even</button>
-      </div>
-      {message && <p className="message">{message}</p>}
-      <button className="next-button" onClick={goToQuizPage}>
-        Next: Take the Quiz
-      </button>
-      <div className='horizontal-lines'></div>
-      <div className="footer">
-        <p>Sustainability Awareness Gaming App</p>
-        <p>University of Johannesburg</p>
-        <p>2024</p>
-      </div>
-    </div>
-  );
-}
+    );
+};
 
 export default SDGGame;

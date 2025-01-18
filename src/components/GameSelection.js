@@ -64,8 +64,28 @@ const GameSelection = () => {
     // }, []);
 
     const startGame = (sdgId) => {
-        navigate(`/games/SDGGame/${sdgId}`);
+        switch (sdgId) {
+            case 4:
+                navigate('/games/sdg4');
+                break;
+            case 8:
+                navigate('/games/sdg8');
+                break;
+            case 12:
+                navigate('/games/sdg12');
+                break;
+            case 16:
+                navigate('/games/sdg16');
+                break;
+            default:
+                alert('This game is not yet available. Stay tuned!');
+        }
     };
+    
+
+    // const startGame = (sdgId) => {
+    //     navigate(`/games/SDGGame/${sdgId}`);
+    // };
 
     const goToLearnPage = (sdgId) => {
         navigate(`/games/learn/${sdgId}`);

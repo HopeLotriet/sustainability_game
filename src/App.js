@@ -12,6 +12,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import SDGGame from './components/games/SDGGame';
 import Learn from './components/games/Learn';
 import Quiz from './components/games/Quiz';
+import SDG4 from './components/games/SDG4';
+import SDG8 from './components/games/SDG8';
+import SDG12 from './components/games/SDG12';
+import SDG16 from './components/games/SDG16';
 
 
 function App() {
@@ -28,6 +32,10 @@ function App() {
         <Route path="/games/learn/:sdgId" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
         <Route path="/games/quiz/:sdgId" element={<ProtectedRoute><Quiz /></ProtectedRoute>} />
         <Route path="/games/sdgGame/:sdgId" element={<ProtectedRoute><SDGGame /></ProtectedRoute>} />
+        <Route path="/games/SDG4" element={<ProtectedRoute><SDG4 /></ProtectedRoute>} />
+        <Route path="/games/SDG8" element={<ProtectedRoute><SDG8 /></ProtectedRoute>} />
+        <Route path="/games/SDG12" element={<ProtectedRoute><SDG12 /></ProtectedRoute>} />
+        <Route path="/games/SDG16" element={<ProtectedRoute><SDG16 /></ProtectedRoute>} />
       </Routes>
     </Router>
   );
